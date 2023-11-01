@@ -1,31 +1,26 @@
-import pickle
-
+import os
+import cv2
 import numpy as np
-from keras.datasets import mnist
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
 from tensorflow import keras
-from keras import layers
+from tensorflow.keras import layers
 
-# Model / data parameters
-num_classes = 10
+
 input_shape = (28, 28, 1)
 
-# Load the data and split it between train and test sets
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+# Loading the MNIST data set with samples and splitting it
+mnist = tf.keras.datasets.mnist
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
 
-# Scale images to the [0, 1] range
-x_train = x_train.astype("float32") / 255
-x_test = x_test.astype("float32") / 255
-# Make sure images have shape (28, 28, 1)
-x_train = np.expand_dims(x_train, -1)
-x_test = np.expand_dims(x_test, -1)
-print("x_train shape:", x_train.shape)
-print(x_train.shape[0], "train samples")
-print(x_test.shape[0], "test samples")
+X_train = X_train.astype("float32") / 255
+X_test = X_test.astype("float32") / 255
+X_train = np.expand_dims(X_train, -1)
+X_test = np.expand_dims(X_test, -1)
 
-# convert class vectors to binary class matrices
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
-
+y_train = keras.utils.to_categorical(y_train, 10)
+y_test = keras.utils.to_categorical(y_test, 10)
 model = keras.Sequential(
     [
         keras.Input(shape=input_shape),
@@ -35,21 +30,20 @@ model = keras.Sequential(
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
         layers.Dropout(0.5),
-        layers.Dense(num_classes, activation="softmax"),
+        layers.Dense(10, activation="softmax"),
     ]
 )
 
-model.summary()
+    # Compiling and optimizing model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-batch_size = 128
-epochs = 15
+    # Training the model
+model.fit(X_train, y_train, epochs=8)
 
-model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+    # Evaluating the model
+val_loss, val_acc = model.evaluate(X_test, y_test)
+print(val_loss)
+print(val_acc)
 
-model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
-
-score = model.evaluate(x_test, y_test, verbose=0)
-print("Test loss:", score[0])
-print("Test accuracy:", score[1])
-
-pickle.dump(model, open('./model.p', 'wb'))
+    # Saving the model
+model.save('handwritten_digits.model')

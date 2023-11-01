@@ -33,7 +33,6 @@ img = ImageTk.PhotoImage(resizedFileImg)
 imageBox = Label(image=img)
 imageBox.image = img
 
-
 quitBtn = Button(root, text="Quit", command=root.destroy)
 
 header.pack()

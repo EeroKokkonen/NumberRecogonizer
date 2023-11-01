@@ -21,7 +21,8 @@ header = Label(root, text="Digit recogniser!")
 button = Button(root, text='Open', command=UploadAction)
 
 fileNameTxt = Label(root, text="File:" )
-photo = PhotoImage(file='./file-icon.png')
+
+photo = PhotoImage(file="./file-icon.png")
 image_label = ttk.Label(
     root,
     image=photo,

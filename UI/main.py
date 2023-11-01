@@ -8,8 +8,13 @@ filename = "none"
 def UploadAction(event=None):
     filename = filedialog.askopenfilename()
     print('Selected:', filename)
-    PhotoImage.config(file=filename)
     fileNameTxt.config(text = filename)
+
+    loadedImg = Image.open(filename)
+    resizedLoadedImg = loadedImg.resize((150,150))
+    loadedImg = ImageTk.PhotoImage(resizedLoadedImg)
+    imageBox.config(image=loadedImg)
+    imageBox.image = loadedImg
 
 root = Tk()
 root.geometry("500x300")
@@ -22,11 +27,11 @@ button = Button(root, text='Open', command=UploadAction)
 
 fileNameTxt = Label(root, text="File:" )
 
-image = Image.open("./UI/file-icon.png")
-resize_image = image.resize((150, 150))
-img = ImageTk.PhotoImage(resize_image)
-label1 = Label(image=img)
-label1.image = img
+fileImage = Image.open("./UI/file-icon.png")
+resizedFileImg = fileImage.resize((150, 150))
+img = ImageTk.PhotoImage(resizedFileImg)
+imageBox = Label(image=img)
+imageBox.image = img
 
 
 quitBtn = Button(root, text="Quit", command=root.destroy)
@@ -34,7 +39,7 @@ quitBtn = Button(root, text="Quit", command=root.destroy)
 header.pack()
 button.pack()
 fileNameTxt.pack()
-label1.pack()
+imageBox.pack()
 quitBtn.pack()
 
 root.mainloop()

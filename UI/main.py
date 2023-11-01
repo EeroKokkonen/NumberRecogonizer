@@ -8,11 +8,16 @@ filename = "none"
 def UploadAction(event=None):
     filename = filedialog.askopenfilename()
     print('Selected:', filename)
-    PhotoImage.config(file=filename)
     fileNameTxt.config(text = filename)
 
+    loadedImg = Image.open(filename)
+    resizedLoadedImg = loadedImg.resize((150,150))
+    loadedImg = ImageTk.PhotoImage(resizedLoadedImg)
+    imageBox.config(image=loadedImg)
+    imageBox.image = loadedImg
+
 root = Tk()
-root.geometry("300x200")
+root.geometry("500x300")
 root.title('Super AI gigabrain')
 
 
@@ -22,20 +27,18 @@ button = Button(root, text='Open', command=UploadAction)
 
 fileNameTxt = Label(root, text="File:" )
 
-photo = PhotoImage(file="./file-icon.png")
-image_label = ttk.Label(
-    root,
-    image=photo,
-    text=filename,
-    compound='top'
-)
+fileImage = Image.open("./UI/file-icon.png")
+resizedFileImg = fileImage.resize((150, 150))
+img = ImageTk.PhotoImage(resizedFileImg)
+imageBox = Label(image=img)
+imageBox.image = img
 
 quitBtn = Button(root, text="Quit", command=root.destroy)
 
 header.pack()
 button.pack()
 fileNameTxt.pack()
-image_label.pack()
+imageBox.pack()
 quitBtn.pack()
 
 root.mainloop()

@@ -15,17 +15,14 @@ class Datahandler:
 
     def predict_number(self, path):
         img = cv2.imread(path)[:,:,0]
+        
         img = np.invert(np.array([img]))
         y_predict = self.model.predict(img)
 
         return y_predict
     
     def __load_model(self):
-        self.model = tf.keras.models.load_model('handwritten_digits.model')
-
-    def __resize_image(self, image):
-        img = np.invert(np.array([image]))
-        return img
+        self.model = tf.keras.models.load_model('own_model.model')
         
 def UploadAction(event=None):
     filename = filedialog.askopenfilename()
@@ -39,13 +36,14 @@ def UploadAction(event=None):
     imageBox.image = loadedImg
     datahandler = Datahandler()
     result = datahandler.predict_number(filename)
+    numberTxt.config(text = np.argmax(result))
     print("The number is probably a {}".format(np.argmax(result)))
 
 
 
 root = Tk()
 root.geometry("500x300")
-root.title('Super AI gigabrain')
+root.title('Number recognizer')
 
 
 header = Label(root, text="Digit recogniser!")
@@ -53,6 +51,8 @@ header = Label(root, text="Digit recogniser!")
 button = Button(root, text='Load Image', command=UploadAction)
 
 fileNameTxt = Label(root, text="File:" )
+numberTxt = Label(root, text="" )
+numberLabelTxt = Label(root, text="The number is:" )
 
 fileImage = Image.open("./UI/file-icon.png")
 resizedFileImg = fileImage.resize((150, 150))
@@ -66,6 +66,8 @@ header.pack()
 button.pack()
 fileNameTxt.pack()
 imageBox.pack()
+numberLabelTxt.pack()
+numberTxt.pack()
 quitBtn.pack()
 
 root.mainloop()
